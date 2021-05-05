@@ -48,4 +48,4 @@ jobs:
         run: composer install --prefer-dist --no-interaction
 
       - name: Run PHPStan
-        run: ./vendor/bin/phpstan analyze --no-progress -c phpstan.php$(php -r 'echo PHP_MAJOR_VERSION;').neon
+        run: ./vendor/bin/phpstan analyze --no-progress
