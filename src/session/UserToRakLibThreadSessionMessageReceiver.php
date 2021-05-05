@@ -15,12 +15,13 @@
 
 declare(strict_types=1);
 
-namespace raklib\server\ipc;
+namespace raklib\server\ipc\session;
 
 use pocketmine\utils\Binary;
 use raklib\protocol\EncapsulatedPacket;
 use raklib\protocol\PacketReliability;
-use raklib\server\ipc\UserToRakLibThreadSessionMessageProtocol as ITCSessionProtocol;
+use raklib\server\ipc\InterThreadChannelReader;
+use raklib\server\ipc\session\UserToRakLibThreadSessionMessageProtocol as ITCSessionProtocol;
 use raklib\server\SessionInterface;
 use function ord;
 use function substr;

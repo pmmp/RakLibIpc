@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace raklib\server\ipc;
 
 use pocketmine\utils\Binary;
+use raklib\server\ipc\session\UserToRakLibThreadSessionMessageReceiver;
 use raklib\server\ipc\UserToRakLibThreadMessageProtocol as ITCProtocol;
 use raklib\server\ServerEventSource;
 use raklib\server\ServerInterface;

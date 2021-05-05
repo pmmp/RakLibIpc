@@ -15,22 +15,32 @@
 
 declare(strict_types=1);
 
-namespace raklib\server\ipc;
+namespace raklib\server\ipc\session;
 
-final class UserToRakLibThreadSessionMessageProtocol{
-	public const ENCAPSULATED_FLAG_NEED_ACK = 1 << 0;
-	public const ENCAPSULATED_FLAG_IMMEDIATE = 1 << 1;
+final class RakLibToUserThreadSessionMessageProtocol{
 
 	/*
 	 * ENCAPSULATED payload:
-	 * byte (flags, last 3 bits, priority)
-	 * byte (reliability)
-	 * int32 (ack identifier)
-	 * byte? (order channel, only when sequenced or ordered reliability)
 	 * byte[] (user packet payload)
 	 */
 	public const PACKET_ENCAPSULATED = 0x01;
 
-	/* No payload */
+	/*
+	 * CLOSE_SESSION payload:
+	 * string (reason)
+	 */
 	public const PACKET_CLOSE_SESSION = 0x02;
+
+	/*
+	 * ACK_NOTIFICATION payload:
+	 * int32 (identifierACK)
+	 */
+	public const PACKET_ACK_NOTIFICATION = 0x03;
+
+	/*
+	 * REPORT_PING payload:
+	 * int32 (measured latency in MS)
+	 */
+	public const PACKET_REPORT_PING = 0x04;
+
 }

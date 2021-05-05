@@ -19,6 +19,7 @@ namespace raklib\server\ipc;
 
 use pocketmine\utils\Binary;
 use raklib\server\ipc\RakLibToUserThreadMessageProtocol as ITCProtocol;
+use raklib\server\ipc\session\RakLibToUserThreadSessionMessageReceiver;
 use raklib\server\ServerEventListener;
 use raklib\server\SessionEventListener;
 use function inet_ntop;

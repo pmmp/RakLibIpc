@@ -15,10 +15,11 @@
 
 declare(strict_types=1);
 
-namespace raklib\server\ipc;
+namespace raklib\server\ipc\session;
 
 use pocketmine\utils\Binary;
-use raklib\server\ipc\RakLibToUserThreadSessionMessageProtocol as ITCSessionProtocol;
+use raklib\server\ipc\InterThreadChannelWriter;
+use raklib\server\ipc\session\RakLibToUserThreadSessionMessageProtocol as ITCSessionProtocol;
 use raklib\server\SessionEventListener;
 use function chr;
 use function strlen;
