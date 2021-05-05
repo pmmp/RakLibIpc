@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#1 \\$ascii of function chr expects int, int\\|null given\\.$#"
+			count: 1
+			path: ../../../src/UserToRakLibThreadMessageSender.php
+
