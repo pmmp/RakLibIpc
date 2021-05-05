@@ -5,7 +5,7 @@
 	"license": "GPL-3.0",
 	"minimum-stability": "dev",
 	"require": {
-		"php": "^7.2 || ^8.0",
+		"php": "^7.4 || ^8.0",
 		"php-64bit": "*",
 		"pocketmine/binaryutils": "dev-master",
 		"pocketmine/raklib": "dev-master"
