@@ -20,12 +20,11 @@ namespace raklib\server\ipc;
 use pocketmine\utils\Binary;
 use raklib\server\ipc\session\UserToRakLibThreadSessionMessageSender;
 use raklib\server\ipc\UserToRakLibThreadMessageProtocol as ITCProtocol;
-use raklib\server\ServerInterface;
 use raklib\server\SessionInterface;
 use function chr;
 use function strlen;
 
-class UserToRakLibThreadMessageSender implements ServerInterface{
+class UserToRakLibThreadMessageSender{
 	/** @var InterThreadChannelWriter */
 	private $channel;
 
@@ -47,10 +46,6 @@ class UserToRakLibThreadMessageSender implements ServerInterface{
 			$channelReaderInfo
 		);
 		return new UserToRakLibThreadSessionMessageSender($channelWriter);
-	}
-
-	public function getSession(int $id) : ?SessionInterface{
-		return null;
 	}
 
 	public function sendRaw(string $address, int $port, string $payload) : void{
