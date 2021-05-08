@@ -20,8 +20,6 @@ namespace raklib\server\ipc;
 use pocketmine\utils\Binary;
 use raklib\server\ipc\RakLibToUserThreadMessageProtocol as ITCProtocol;
 use raklib\server\ipc\session\RakLibToUserThreadSessionMessageReceiver;
-use raklib\server\ServerEventListener;
-use raklib\server\SessionEventListener;
 use function inet_ntop;
 use function ord;
 use function substr;
@@ -32,12 +30,6 @@ final class RakLibToUserThreadMessageReceiver{
 
 	private InterThreadChannelReaderDeserializer $channelFactory;
 
-	/**
-	 * @var SessionEventListener[][]|RakLibToUserThreadSessionMessageReceiver[][]
-	 * @phpstan-var array<int, array{RakLibToUserThreadSessionMessageReceiver, SessionEventListener}>
-	 */
-	private array $sessionMap = [];
-
 	public function __construct(InterThreadChannelReader $channel, InterThreadChannelReaderDeserializer $channelFactory){
 		$this->channel = $channel;
 		$this->channelFactory = $channelFactory;
@@ -46,7 +38,7 @@ final class RakLibToUserThreadMessageReceiver{
 	/**
 	 * @phpstan-return \Generator<int, null, void, void>
 	 */
-	public function handle(ServerEventListener $listener) : \Generator{
+	public function handle(RakLibToUserThreadServerEventListener $listener) : \Generator{
 		do{
 			$processed = false;
 			if(($packet = $this->channel->read()) !== null){
@@ -84,26 +76,12 @@ final class RakLibToUserThreadMessageReceiver{
 					$channelReader = $this->channelFactory->deserialize($channelReaderInfo);
 					if($channelReader !== null){ //the channel may have been destroyed before we could deserialize it
 						$receiver = new RakLibToUserThreadSessionMessageReceiver($channelReader);
-						$sessionListener = $listener->onClientConnect($sessionId, $address, $port, $clientID);
-						$this->sessionMap[$sessionId] = [$receiver, $sessionListener];
+						$listener->onClientConnect($sessionId, $address, $port, $clientID, $receiver);
 					}
 				}
 
 				$processed = true;
 				yield;
-			}
-
-			foreach($this->sessionMap as $sessionId => [$receiver, $sessionListener]){
-				try{
-					if($receiver->process($sessionListener)){
-						$processed = true;
-						yield;
-					}
-				}finally{
-					if($receiver->isClosed()){
-						unset($this->sessionMap[$sessionId]);
-					}
-				}
 			}
 		}while($processed);
 	}
