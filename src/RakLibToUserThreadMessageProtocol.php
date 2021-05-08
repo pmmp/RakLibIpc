@@ -34,13 +34,6 @@ final class RakLibToUserThreadMessageProtocol{
 	 */
 
 	/*
-	 * ENCAPSULATED payload:
-	 * int32 (internal session ID)
-	 * byte[] (user packet payload)
-	 */
-	public const PACKET_ENCAPSULATED = 0x01;
-
-	/*
 	 * OPEN_SESSION payload:
 	 * int32 (internal session ID)
 	 * byte (address length)
@@ -49,20 +42,6 @@ final class RakLibToUserThreadMessageProtocol{
 	 * long (clientID)
 	 */
 	public const PACKET_OPEN_SESSION = 0x02;
-
-	/*
-	 * CLOSE_SESSION payload:
-	 * int32 (internal session ID)
-	 * string (reason)
-	 */
-	public const PACKET_CLOSE_SESSION = 0x03;
-
-	/*
-	 * ACK_NOTIFICATION payload:
-	 * int32 (internal session ID)
-	 * int32 (identifierACK)
-	 */
-	public const PACKET_ACK_NOTIFICATION = 0x04;
 
 	/*
 	 * REPORT_BANDWIDTH_STATS payload:
@@ -79,12 +58,4 @@ final class RakLibToUserThreadMessageProtocol{
 	 * byte[] (payload)
 	 */
 	public const PACKET_RAW = 0x06;
-
-	/*
-	 * REPORT_PING payload:
-	 * int32 (internal session ID)
-	 * int32 (measured latency in MS)
-	 */
-	public const PACKET_REPORT_PING = 0x07;
-
 }
