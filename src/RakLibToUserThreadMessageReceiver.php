@@ -25,8 +25,7 @@ use function ord;
 use function substr;
 
 final class RakLibToUserThreadMessageReceiver{
-	/** @var InterThreadChannelReader */
-	private $channel;
+	private InterThreadChannelReader $channel;
 
 	public function __construct(InterThreadChannelReader $channel){
 		$this->channel = $channel;

@@ -26,8 +26,7 @@ use function strlen;
 
 final class RakLibToUserThreadMessageSender implements ServerEventListener{
 
-	/** @var InterThreadChannelWriter */
-	private $channel;
+	private InterThreadChannelWriter $channel;
 
 	public function __construct(InterThreadChannelWriter $channel){
 		$this->channel = $channel;

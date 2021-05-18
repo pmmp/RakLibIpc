@@ -26,8 +26,7 @@ use function chr;
 use function strlen;
 
 class UserToRakLibThreadMessageSender implements ServerInterface{
-	/** @var InterThreadChannelWriter */
-	private $channel;
+	private InterThreadChannelWriter $channel;
 
 	public function __construct(InterThreadChannelWriter $channel){
 		$this->channel = $channel;
