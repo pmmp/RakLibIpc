@@ -70,9 +70,8 @@ final class RakLibToUserThreadMessageReceiver{
 			}elseif($id === ITCProtocol::PACKET_CLOSE_SESSION){
 				$sessionId = Binary::readInt(substr($packet, $offset, 4));
 				$offset += 4;
-				$len = ord($packet[$offset++]);
-				$reason = substr($packet, $offset, $len);
-				$listener->onClientDisconnect($sessionId, $reason);
+				$reason = ord($packet[$offset]);
+				$listener->onClientDisconnect($sessionId, $reason); // @phpstan-ignore-line
 			}elseif($id === ITCProtocol::PACKET_ACK_NOTIFICATION){
 				$sessionId = Binary::readInt(substr($packet, $offset, 4));
 				$offset += 4;

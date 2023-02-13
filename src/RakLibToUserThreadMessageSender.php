@@ -46,11 +46,11 @@ final class RakLibToUserThreadMessageSender implements ServerEventListener{
 		);
 	}
 
-	public function onClientDisconnect(int $sessionId, string $reason) : void{
+	public function onClientDisconnect(int $sessionId, int $reason) : void{
 		$this->channel->write(
 			chr(ITCProtocol::PACKET_CLOSE_SESSION) .
 			Binary::writeInt($sessionId) .
-			chr(strlen($reason)) . $reason
+			chr($reason)
 		);
 	}
 
