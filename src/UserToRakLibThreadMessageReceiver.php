@@ -27,11 +27,9 @@ use function ord;
 use function substr;
 
 final class UserToRakLibThreadMessageReceiver implements ServerEventSource{
-	private InterThreadChannelReader $channel;
-
-	public function __construct(InterThreadChannelReader $channel){
-		$this->channel = $channel;
-	}
+	public function __construct(
+		private InterThreadChannelReader $channel
+	){}
 
 	public function process(ServerInterface $server) : bool{
 		if(($packet = $this->channel->read()) !== null){

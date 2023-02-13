@@ -26,11 +26,9 @@ use function chr;
 use function strlen;
 
 class UserToRakLibThreadMessageSender implements ServerInterface{
-	private InterThreadChannelWriter $channel;
-
-	public function __construct(InterThreadChannelWriter $channel){
-		$this->channel = $channel;
-	}
+	public function __construct(
+		private InterThreadChannelWriter $channel
+	){}
 
 	public function sendEncapsulated(int $sessionId, EncapsulatedPacket $packet, bool $immediate = false) : void{
 		$flags =
