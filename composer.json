@@ -7,7 +7,7 @@
 		"php": "^8.0",
 		"php-64bit": "*",
 		"pocketmine/binaryutils": "^0.2.0",
-		"pocketmine/raklib": "^0.15.0"
+		"pocketmine/raklib": "^0.15.0 || ^1.0.0"
 	},
 	"require-dev": {
 		"phpstan/phpstan": "1.9.17",
