@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace raklib\server\ipc;
 
-use pocketmine\utils\Binary;
+use pmmp\encoding\LE;
 use raklib\server\ipc\RakLibToUserThreadMessageProtocol as ITCProtocol;
 use raklib\server\ServerEventListener;
 use function inet_ntop;
@@ -34,7 +34,7 @@ final class RakLibToUserThreadMessageReceiver{
 			$id = ord($packet[0]);
 			$offset = 1;
 			if($id === ITCProtocol::PACKET_ENCAPSULATED){
-				$sessionId = Binary::readInt(substr($packet, $offset, 4));
+				$sessionId = LE::unpackUnsignedInt(substr($packet, $offset, 4));
 				$offset += 4;
 				$buffer = substr($packet, $offset);
 				$listener->onPacketReceive($sessionId, $buffer);
@@ -42,17 +42,17 @@ final class RakLibToUserThreadMessageReceiver{
 				$len = ord($packet[$offset++]);
 				$address = substr($packet, $offset, $len);
 				$offset += $len;
-				$port = Binary::readShort(substr($packet, $offset, 2));
+				$port = LE::unpackUnsignedShort(substr($packet, $offset, 2));
 				$offset += 2;
 				$payload = substr($packet, $offset);
 				$listener->onRawPacketReceive($address, $port, $payload);
 			}elseif($id === ITCProtocol::PACKET_REPORT_BANDWIDTH_STATS){
-				$sentBytes = Binary::readLong(substr($packet, $offset, 8));
+				$sentBytes = LE::unpackUnsignedLong(substr($packet, $offset, 8));
 				$offset += 8;
-				$receivedBytes = Binary::readLong(substr($packet, $offset, 8));
+				$receivedBytes = LE::unpackUnsignedLong(substr($packet, $offset, 8));
 				$listener->onBandwidthStatsUpdate($sentBytes, $receivedBytes);
 			}elseif($id === ITCProtocol::PACKET_OPEN_SESSION){
-				$sessionId = Binary::readInt(substr($packet, $offset, 4));
+				$sessionId = LE::unpackUnsignedInt(substr($packet, $offset, 4));
 				$offset += 4;
 				$len = ord($packet[$offset++]);
 				$rawAddr = substr($packet, $offset, $len);
@@ -61,24 +61,24 @@ final class RakLibToUserThreadMessageReceiver{
 				if($address === false){
 					throw new \RuntimeException("Unexpected invalid IP address in inter-thread message");
 				}
-				$port = Binary::readShort(substr($packet, $offset, 2));
+				$port = LE::unpackUnsignedShort(substr($packet, $offset, 2));
 				$offset += 2;
-				$clientID = Binary::readLong(substr($packet, $offset, 8));
+				$clientID = LE::unpackUnsignedLong(substr($packet, $offset, 8));
 				$listener->onClientConnect($sessionId, $address, $port, $clientID);
 			}elseif($id === ITCProtocol::PACKET_CLOSE_SESSION){
-				$sessionId = Binary::readInt(substr($packet, $offset, 4));
+				$sessionId = LE::unpackUnsignedInt(substr($packet, $offset, 4));
 				$offset += 4;
 				$reason = ord($packet[$offset]);
 				$listener->onClientDisconnect($sessionId, $reason);
 			}elseif($id === ITCProtocol::PACKET_ACK_NOTIFICATION){
-				$sessionId = Binary::readInt(substr($packet, $offset, 4));
+				$sessionId = LE::unpackUnsignedInt(substr($packet, $offset, 4));
 				$offset += 4;
-				$identifierACK = Binary::readInt(substr($packet, $offset, 4));
+				$identifierACK = LE::unpackSignedInt(substr($packet, $offset, 4));
 				$listener->onPacketAck($sessionId, $identifierACK);
 			}elseif($id === ITCProtocol::PACKET_REPORT_PING){
-				$sessionId = Binary::readInt(substr($packet, $offset, 4));
+				$sessionId = LE::unpackUnsignedInt(substr($packet, $offset, 4));
 				$offset += 4;
-				$pingMS = Binary::readInt(substr($packet, $offset, 4));
+				$pingMS = LE::unpackUnsignedInt(substr($packet, $offset, 4));
 				$listener->onPingMeasure($sessionId, $pingMS);
 			}
 
