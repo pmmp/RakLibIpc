@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace raklib\server\ipc;
 
 use pocketmine\utils\Binary;
+use raklib\generic\DisconnectReason;
 use raklib\server\ipc\RakLibToUserThreadMessageProtocol as ITCProtocol;
 use raklib\server\ServerEventListener;
 use function inet_ntop;
@@ -68,6 +69,8 @@ final class RakLibToUserThreadMessageReceiver{
 			}elseif($id === ITCProtocol::PACKET_CLOSE_SESSION){
 				$sessionId = Binary::readInt(substr($packet, $offset, 4));
 				$offset += 4;
+				//don't love this, but we know the sender will never send an invalid value, so this is fine
+				/** @phpstan-var DisconnectReason::* $reason */
 				$reason = ord($packet[$offset]);
 				$listener->onClientDisconnect($sessionId, $reason);
 			}elseif($id === ITCProtocol::PACKET_ACK_NOTIFICATION){
