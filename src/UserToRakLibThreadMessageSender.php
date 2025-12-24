@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace raklib\server\ipc;
 
-use pocketmine\utils\Binary;
+use pmmp\encoding\LE;
 use raklib\protocol\EncapsulatedPacket;
 use raklib\protocol\PacketReliability;
 use raklib\server\ipc\UserToRakLibThreadMessageProtocol as ITCProtocol;
@@ -36,22 +36,22 @@ class UserToRakLibThreadMessageSender implements ServerInterface{
 			($packet->identifierACK !== null ? ITCProtocol::ENCAPSULATED_FLAG_NEED_ACK : 0);
 
 		$buffer = chr(ITCProtocol::PACKET_ENCAPSULATED) .
-			Binary::writeInt($sessionId) .
+			LE::packUnsignedInt($sessionId) .
 			chr($flags) .
 			chr($packet->reliability) .
-			($packet->identifierACK !== null ? Binary::writeInt($packet->identifierACK) : "") .
+			($packet->identifierACK !== null ? LE::packSignedInt($packet->identifierACK) : "") .
 			(PacketReliability::isSequencedOrOrdered($packet->reliability) ? chr($packet->orderChannel) : "") .
 			$packet->buffer;
 		$this->channel->write($buffer);
 	}
 
 	public function sendRaw(string $address, int $port, string $payload) : void{
-		$buffer = chr(ITCProtocol::PACKET_RAW) . chr(strlen($address)) . $address . Binary::writeShort($port) . $payload;
+		$buffer = chr(ITCProtocol::PACKET_RAW) . chr(strlen($address)) . $address . LE::packUnsignedShort($port) . $payload;
 		$this->channel->write($buffer);
 	}
 
 	public function closeSession(int $sessionId) : void{
-		$buffer = chr(ITCProtocol::PACKET_CLOSE_SESSION) . Binary::writeInt($sessionId);
+		$buffer = chr(ITCProtocol::PACKET_CLOSE_SESSION) . LE::packUnsignedInt($sessionId);
 		$this->channel->write($buffer);
 	}
 
@@ -64,11 +64,11 @@ class UserToRakLibThreadMessageSender implements ServerInterface{
 	}
 
 	public function setPacketsPerTickLimit(int $limit) : void{
-		$this->channel->write(chr(ITCProtocol::PACKET_SET_PACKETS_PER_TICK_LIMIT) . Binary::writeLong($limit));
+		$this->channel->write(chr(ITCProtocol::PACKET_SET_PACKETS_PER_TICK_LIMIT) . LE::packUnsignedLong($limit));
 	}
 
 	public function blockAddress(string $address, int $timeout) : void{
-		$buffer = chr(ITCProtocol::PACKET_BLOCK_ADDRESS) . chr(strlen($address)) . $address . Binary::writeInt($timeout);
+		$buffer = chr(ITCProtocol::PACKET_BLOCK_ADDRESS) . chr(strlen($address)) . $address . LE::packUnsignedInt($timeout);
 		$this->channel->write($buffer);
 	}
 

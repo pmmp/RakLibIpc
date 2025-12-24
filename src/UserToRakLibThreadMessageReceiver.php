@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace raklib\server\ipc;
 
-use pocketmine\utils\Binary;
+use pmmp\encoding\LE;
 use raklib\protocol\EncapsulatedPacket;
 use raklib\protocol\PacketReliability;
 use raklib\server\ipc\UserToRakLibThreadMessageProtocol as ITCProtocol;
@@ -36,7 +36,7 @@ final class UserToRakLibThreadMessageReceiver implements ServerEventSource{
 			$id = ord($packet[0]);
 			$offset = 1;
 			if($id === ITCProtocol::PACKET_ENCAPSULATED){
-				$sessionId = Binary::readInt(substr($packet, $offset, 4));
+				$sessionId = LE::unpackUnsignedInt(substr($packet, $offset, 4));
 				$offset += 4;
 				$flags = ord($packet[$offset++]);
 				$immediate = ($flags & ITCProtocol::ENCAPSULATED_FLAG_IMMEDIATE) !== 0;
@@ -46,7 +46,7 @@ final class UserToRakLibThreadMessageReceiver implements ServerEventSource{
 				$encapsulated->reliability = ord($packet[$offset++]);
 
 				if($needACK){
-					$encapsulated->identifierACK = Binary::readInt(substr($packet, $offset, 4));
+					$encapsulated->identifierACK = LE::unpackSignedInt(substr($packet, $offset, 4));
 					$offset += 4;
 				}
 
@@ -60,12 +60,12 @@ final class UserToRakLibThreadMessageReceiver implements ServerEventSource{
 				$len = ord($packet[$offset++]);
 				$address = substr($packet, $offset, $len);
 				$offset += $len;
-				$port = Binary::readShort(substr($packet, $offset, 2));
+				$port = LE::unpackUnsignedShort(substr($packet, $offset, 2));
 				$offset += 2;
 				$payload = substr($packet, $offset);
 				$server->sendRaw($address, $port, $payload);
 			}elseif($id === ITCProtocol::PACKET_CLOSE_SESSION){
-				$sessionId = Binary::readInt(substr($packet, $offset, 4));
+				$sessionId = LE::unpackUnsignedInt(substr($packet, $offset, 4));
 				$server->closeSession($sessionId);
 			}elseif($id === ITCProtocol::PACKET_SET_NAME){
 				$server->setName(substr($packet, $offset));
@@ -74,13 +74,13 @@ final class UserToRakLibThreadMessageReceiver implements ServerEventSource{
 			}elseif($id === ITCProtocol::PACKET_DISABLE_PORT_CHECK){
 				$server->setPortCheck(false);
 			}elseif($id === ITCProtocol::PACKET_SET_PACKETS_PER_TICK_LIMIT){
-				$limit = Binary::readLong(substr($packet, $offset, 8));
+				$limit = LE::unpackUnsignedLong(substr($packet, $offset, 8));
 				$server->setPacketsPerTickLimit($limit);
 			}elseif($id === ITCProtocol::PACKET_BLOCK_ADDRESS){
 				$len = ord($packet[$offset++]);
 				$address = substr($packet, $offset, $len);
 				$offset += $len;
-				$timeout = Binary::readInt(substr($packet, $offset, 4));
+				$timeout = LE::unpackUnsignedInt(substr($packet, $offset, 4));
 				$server->blockAddress($address, $timeout);
 			}elseif($id === ITCProtocol::PACKET_UNBLOCK_ADDRESS){
 				$len = ord($packet[$offset++]);

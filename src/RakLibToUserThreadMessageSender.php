@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace raklib\server\ipc;
 
-use pocketmine\utils\Binary;
+use pmmp\encoding\LE;
 use raklib\server\ipc\RakLibToUserThreadMessageProtocol as ITCProtocol;
 use raklib\server\ServerEventListener;
 use function chr;
@@ -36,17 +36,17 @@ final class RakLibToUserThreadMessageSender implements ServerEventListener{
 		}
 		$this->channel->write(
 			chr(ITCProtocol::PACKET_OPEN_SESSION) .
-			Binary::writeInt($sessionId) .
+			LE::packUnsignedInt($sessionId) .
 			chr(strlen($rawAddr)) . $rawAddr .
-			Binary::writeShort($port) .
-			Binary::writeLong($clientId)
+			LE::packUnsignedShort($port) .
+			LE::packUnsignedLong($clientId)
 		);
 	}
 
 	public function onClientDisconnect(int $sessionId, int $reason) : void{
 		$this->channel->write(
 			chr(ITCProtocol::PACKET_CLOSE_SESSION) .
-			Binary::writeInt($sessionId) .
+			LE::packUnsignedInt($sessionId) .
 			chr($reason)
 		);
 	}
@@ -54,7 +54,7 @@ final class RakLibToUserThreadMessageSender implements ServerEventListener{
 	public function onPacketReceive(int $sessionId, string $packet) : void{
 		$this->channel->write(
 			chr(ITCProtocol::PACKET_ENCAPSULATED) .
-			Binary::writeInt($sessionId) .
+			LE::packUnsignedInt($sessionId) .
 			$packet
 		);
 	}
@@ -63,7 +63,7 @@ final class RakLibToUserThreadMessageSender implements ServerEventListener{
 		$this->channel->write(
 			chr(ITCProtocol::PACKET_RAW) .
 			chr(strlen($address)) . $address .
-			Binary::writeShort($port) .
+			LE::packUnsignedShort($port) .
 			$payload
 		);
 	}
@@ -71,24 +71,24 @@ final class RakLibToUserThreadMessageSender implements ServerEventListener{
 	public function onPacketAck(int $sessionId, int $identifierACK) : void{
 		$this->channel->write(
 			chr(ITCProtocol::PACKET_ACK_NOTIFICATION) .
-			Binary::writeInt($sessionId) .
-			Binary::writeInt($identifierACK)
+			LE::packUnsignedInt($sessionId) .
+			LE::packSignedInt($identifierACK)
 		);
 	}
 
 	public function onBandwidthStatsUpdate(int $bytesSentDiff, int $bytesReceivedDiff) : void{
 		$this->channel->write(
 			chr(ITCProtocol::PACKET_REPORT_BANDWIDTH_STATS) .
-			Binary::writeLong($bytesSentDiff) .
-			Binary::writeLong($bytesReceivedDiff)
+			LE::packUnsignedLong($bytesSentDiff) .
+			LE::packSignedLong($bytesReceivedDiff)
 		);
 	}
 
 	public function onPingMeasure(int $sessionId, int $pingMS) : void{
 		$this->channel->write(
 			chr(ITCProtocol::PACKET_REPORT_PING) .
-			Binary::writeInt($sessionId) .
-			Binary::writeInt($pingMS)
+			LE::packUnsignedInt($sessionId) .
+			LE::packUnsignedInt($pingMS)
 		);
 	}
 }
